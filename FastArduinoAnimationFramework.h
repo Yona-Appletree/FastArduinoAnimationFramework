@@ -7,11 +7,18 @@
 
 const int animationStepStateSize = 4;
 
-struct AnimationPlanStep;
+/**
+ * Macros for packing millisecond values into 8-bit integers. Each second is represented as 8 units, allowing for a total
+ * of 32 seconds to be represented. Used for animation durations, where that level of precision is acceptable.
+ */
+#define FAF_PACK_MS(ms) (uint8_t)((ms * 8)/1000)
+#define FAF_UNPACK_MS(ms) (((uint16_t)ms * 1000)/8)
+
+struct AnimationStep;
 struct AnimationPlan;
 
 typedef void (*AnimationSequenceStep)(
-	AnimationPlanStep* step,
+	AnimationStep* step,
 	CRGBPalette16& palette,
 	void* state,
 	fract16 timeMs,
@@ -20,25 +27,44 @@ typedef void (*AnimationSequenceStep)(
 	CRGB* ledData,
 	uint16_t ledCount
 );
-typedef AnimationSequenceStep (*AnimationSequenceSetup)(AnimationPlanStep* stepInfo, void* state);
+typedef AnimationSequenceStep (*AnimationSequenceSetup)(AnimationStep* stepInfo, void* state);
 
-
-struct AnimationPlanStep {
-	AnimationSequenceSetup animationFunc;
-	void* animationParams;
+struct AnimationStepCommonParams {
 	const TProgmemRGBPalette16& palette;
 
-	uint16_t durationMs;
-	uint16_t transitionMs;
+	uint8_t durationPackedMs;
+	uint8_t transitionPackedMs;
 	uint8_t repetitions;
 };
 
+struct AnimationStep {
+	AnimationSequenceSetup animationFunc;
+	AnimationStepCommonParams* commonParams;
 
+	inline uint16_t durationMs() {
+		return FAF_UNPACK_MS(commonParams->durationPackedMs);
+	}
+	inline uint16_t transitionMs() {
+		return FAF_UNPACK_MS(commonParams->transitionPackedMs);
+	}
+};
+
+template<uint16_t transitionMs, const TProgmemRGBPalette16& palette, uint16_t durationMs, uint8_t repetitions>
+AnimationStepCommonParams* commonParams() {
+	static AnimationStepCommonParams params = {
+		.palette = palette,
+		.durationPackedMs = FAF_PACK_MS(durationMs),
+		.transitionPackedMs = FAF_PACK_MS(transitionMs),
+		.repetitions = repetitions
+	};
+
+	return &params;
+}
 
 class LedAnimation {
 public:
 	LedAnimation(
-		AnimationPlanStep** steps,
+		AnimationStep** steps,
 		CRGB* ledData,
 		uint16_t ledCount
 	): steps(steps),
@@ -58,16 +84,16 @@ public:
 
 		uint16_t remainingMs = currentStepEndMs - now;
 
-		AnimationPlanStep* step = steps[currentStepIndex];
+		AnimationStep* step = steps[currentStepIndex];
 
 		if (now < transitionEndMs) {
-			uint8_t transitionAmount = ((uint32_t)(step->transitionMs - (transitionEndMs - millis())) << 8) / step->transitionMs;
+			uint8_t transitionAmount = ((uint32_t)(step->transitionMs() - (transitionEndMs - millis())) << 8) / step->transitionMs();
 
 			currentStepFunc(
 				step,
 				currentPalette,
 				currentStepState,
-				step->durationMs - remainingMs,
+				step->durationMs() - remainingMs,
 				0,
 				scale8(ledCount, transitionAmount),
 				ledData,
@@ -78,7 +104,7 @@ public:
 //			CRGB prevBuffer[bufferSize];
 //			uint8_t chunkCount = ledCount/bufferSize + (ledCount%bufferSize==0 ? 0 : 1);
 //
-//			AnimationPlanStep* oldStep = * prevStep;
+//			AnimationStep* oldStep = * prevStep;
 //
 //			uint16_t ledStart = 0;
 //			for (uint8_t i=0; i<chunkCount; i++, ledStart += bufferSize) {
@@ -117,7 +143,7 @@ public:
 				step,
 				currentPalette,
 				currentStepState,
-				step->durationMs - remainingMs,
+				step->durationMs() - remainingMs,
 				0,
 				ledCount,
 				ledData,
@@ -128,8 +154,8 @@ public:
 
 private:
 	void nextStep(bool first) {
-		if (remainingReps > 0) {
-			currentStepEndMs = millis() + steps[currentStepIndex]->durationMs;
+		if (remainingReps > 0 || (!first && currentStepIndex == 0 && !steps[currentStepIndex+1])) {
+			currentStepEndMs = millis() + steps[currentStepIndex]->durationMs() - 1;
 			remainingReps --;
 		} else {
 //			prevStep = currentStep;
@@ -144,19 +170,19 @@ private:
 				}
 			}
 
-			AnimationPlanStep* step = steps[currentStepIndex];
+			AnimationStep* step = steps[currentStepIndex];
 
-			transitionEndMs = first ? 0 : (millis() + step->transitionMs);
+			transitionEndMs = first ? 0 : (millis() + step->transitionMs());
 
 			currentStepFunc = step->animationFunc(step, currentStepState);
-			currentStepEndMs = millis() + step->durationMs;
-			currentPalette = step->palette;
-			remainingReps = max(1, step->repetitions) - 1;
+			currentStepEndMs = millis() + step->durationMs();
+			currentPalette = step->commonParams->palette;
+			remainingReps = max(1, step->commonParams->repetitions) - 1;
 		}
 	}
 
 private:
-	AnimationPlanStep** steps;
+	AnimationStep** steps;
 
 	CRGB* ledData;
 	uint16_t ledCount;
@@ -170,7 +196,7 @@ private:
 	uint8_t remainingReps = 0;
 
 //	CRGBPalette16 prevPalette;
-//	AnimationPlanStep** prevStep = NULL;
+//	AnimationStep** prevStep = NULL;
 //	AnimationSequenceStep prevStepFunc = NULL;
 //	uint8_t prevStepState[animationStepStateSize];
 };
