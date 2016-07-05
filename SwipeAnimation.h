@@ -37,7 +37,7 @@ void swipeAnimationStep(
 
 template<
 	uint16_t transitionMs,
-	const TProgmemRGBPalette16& palette,
+	BuildAnimationPalette paletteFunc,
 	uint16_t durationMs,
 	uint8_t repetitions,
 	bool leftToRight,
@@ -48,7 +48,7 @@ SwipeAnimationStep* swipeAnimation() {
 	static SwipeAnimationStep params;
 
 	params.animationFunc = (AnimationSequenceStep) &swipeAnimationStep;
-	params.commonParams = commonParams<transitionMs, palette, durationMs, repetitions>();
+	params.commonParams = commonParams<transitionMs, paletteFunc, durationMs, repetitions>();
 	params.leftToRight = leftToRight;
 	params.color1 = color1;
 	params.color2 = color2;

@@ -10,28 +10,28 @@
 
 CRGB strip1[150];
 AnimationStep* steps1[] = {
-	//blinkAnimation<400, ForestColors_p, 2000, 1, /* aMs */100, /* bMs */500>(),
-	//fadeAnimation<400, RainbowColors_p, 2000, 1, /* reps */2>(),
-	//fadeAnimation<200, RainbowStripeColors_p, 5000, 1, /* reps */1>(),
-	//fadeAnimation<200, HeatColors_p, 5000, 1, /* reps */1>(),
+	//blinkAnimation<400, &usePalette<ForestColors_p>, 2000, 1, /* aMs */100, /* bMs */500>(),
+	//fadeAnimation<400, &usePalette<RainbowColors_p>, 2000, 1, /* reps */2>(),
+	//fadeAnimation<200, &usePalette<RainbowStripeColors_p>, 5000, 1, /* reps */1>(),
+	//fadeAnimation<200, &usePalette<HeatColors_p>, 5000, 1, /* reps */1>(),
 
-	//      transition  color palette    time rep animation specific params
-	swipeAnimation<500, RainbowColors_p, 1000, 1, /*ltr*/ false, /*color1*/255*0/6, /*color2*/255*1/6>(),
-	swipeAnimation<  0, RainbowColors_p, 1000, 1, /*ltr*/ false, /*color1*/255*1/6, /*color2*/255*2/6>(),
-	swipeAnimation<  0, RainbowColors_p, 1000, 1, /*ltr*/ false, /*color1*/255*2/6, /*color2*/255*3/6>(),
-	swipeAnimation<  0, RainbowColors_p, 1000, 1, /*ltr*/ false, /*color1*/255*3/6, /*color2*/255*4/6>(),
-	swipeAnimation<  0, RainbowColors_p, 1000, 1, /*ltr*/ false, /*color1*/255*4/6, /*color2*/255*5/6>(),
-	swipeAnimation<  0, RainbowColors_p, 1000, 1, /*ltr*/ false, /*color1*/255*5/6, /*color2*/255*6/6>(),
+	//      transition  color &usePalette<   time rep animation specific params
+	swipeAnimation<500, &useColors<CRGB::Red, CRGB::Green>, 1000, 1, /*ltr*/ false, /*color1*/255*0/6, /*color2*/255*1/6>(),
+	swipeAnimation<  0, &usePalette<RainbowColors_p>, 1000, 1, /*ltr*/ false, /*color1*/255*1/6, /*color2*/255*2/6>(),
+	swipeAnimation<  0, &usePalette<RainbowColors_p>, 1000, 1, /*ltr*/ false, /*color1*/255*2/6, /*color2*/255*3/6>(),
+	swipeAnimation<  0, &usePalette<RainbowColors_p>, 1000, 1, /*ltr*/ false, /*color1*/255*3/6, /*color2*/255*4/6>(),
+	swipeAnimation<  0, &usePalette<RainbowColors_p>, 1000, 1, /*ltr*/ false, /*color1*/255*4/6, /*color2*/255*5/6>(),
+	swipeAnimation<  0, &usePalette<RainbowColors_p>, 1000, 1, /*ltr*/ false, /*color1*/255*5/6, /*color2*/255*6/6>(),
 
-	//fadeAnimation< 0,  ForestColors_p, 1000, 1, /* reps */1>(),
-//	cylonAnimation<500, RainbowColors_p, 2500, 1, /*swipes*/4, /*width*/255/2, /*color*/(1*255)/6, /*flags*/CYLON_BOUNCE | CYLON_REVERSE | CYLON_FADE | CYLON_ROTATE_COLORS | CYLON_SHOW_PALETTE>(),
-//	cylonAnimation<500, RainbowColors_p, 2500, 1, /*swipes*/4, /*width*/255/2, /*color*/(2*255)/6, /*flags*/CYLON_BOUNCE | CYLON_FADE | CYLON_ROTATE_COLORS | CYLON_SHOW_PALETTE>(),
-//	cylonAnimation<500, RainbowColors_p, 2500, 1, /*swipes*/4, /*width*/255/2, /*color*/(3*255)/6, /*flags*/CYLON_BOUNCE | CYLON_ROTATE_COLORS | CYLON_SHOW_PALETTE>(),
-//	cylonAnimation<500, RainbowColors_p, 2500, 1, /*swipes*/4, /*width*/255/2, /*color*/(3*255)/6, /*flags*/CYLON_BOUNCE | CYLON_SHOW_PALETTE>(),
-//	cylonAnimation<500, RainbowColors_p, 2500, 1, /*swipes*/4, /*width*/255/2, /*color*/(3*255)/6, /*flags*/CYLON_BOUNCE>(),
-//	cylonAnimation<500, RainbowColors_p, 2500, 1, /*swipes*/4, /*width*/255/2, /*color*/(3*255)/6, /*flags*/CYLON_REVERSE | CYLON_FADE | CYLON_ROTATE_COLORS | CYLON_SHOW_PALETTE>(),
-	cylonAnimation<500, RainbowColors_p, 2500, 1, /*swipes*/4, /*width*/255/2, /*color*/(3*255)/6, /*flags*/CYLON_FADE | CYLON_ROTATE_COLORS | CYLON_SHOW_PALETTE>(),
-	fireAnimation< 500, HeatColors_p, 5000, 1, /*size*/64, /*cooling*/85, /*sparking*/64>(),
+	//fadeAnimation< 0,  &usePalette<ForestColors_p>, 1000, 1, /* reps */1>(),
+//	cylonAnimation<500, &usePalette<RainbowColors_p>, 2500, 1, /*swipes*/4, /*width*/255/2, /*color*/(1*255)/6, /*flags*/CYLON_BOUNCE | CYLON_REVERSE | CYLON_FADE | CYLON_ROTATE_COLORS | CYLON_SHOW_PALETTE>(),
+//	cylonAnimation<500, &usePalette<RainbowColors_p>, 2500, 1, /*swipes*/4, /*width*/255/2, /*color*/(2*255)/6, /*flags*/CYLON_BOUNCE | CYLON_FADE | CYLON_ROTATE_COLORS | CYLON_SHOW_PALETTE>(),
+//	cylonAnimation<500, &usePalette<RainbowColors_p>, 2500, 1, /*swipes*/4, /*width*/255/2, /*color*/(3*255)/6, /*flags*/CYLON_BOUNCE | CYLON_ROTATE_COLORS | CYLON_SHOW_PALETTE>(),
+//	cylonAnimation<500, &usePalette<RainbowColors_p>, 2500, 1, /*swipes*/4, /*width*/255/2, /*color*/(3*255)/6, /*flags*/CYLON_BOUNCE | CYLON_SHOW_PALETTE>(),
+//	cylonAnimation<500, &usePalette<RainbowColors_p>, 2500, 1, /*swipes*/4, /*width*/255/2, /*color*/(3*255)/6, /*flags*/CYLON_BOUNCE>(),
+//	cylonAnimation<500, &usePalette<RainbowColors_p>, 2500, 1, /*swipes*/4, /*width*/255/2, /*color*/(3*255)/6, /*flags*/CYLON_REVERSE | CYLON_FADE | CYLON_ROTATE_COLORS | CYLON_SHOW_PALETTE>(),
+	cylonAnimation<500, &usePalette<RainbowColors_p>, 2500, 1, /*swipes*/4, /*width*/255/2, /*color*/(3*255)/6, /*flags*/CYLON_FADE | CYLON_ROTATE_COLORS | CYLON_SHOW_PALETTE>(),
+	fireAnimation< 500, &usePalette<HeatColors_p>, 5000, 1, /*size*/64, /*cooling*/85, /*sparking*/64>(),
 	NULL
 };
 LedAnimation animation1(steps1, strip1, 150);

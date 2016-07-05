@@ -34,12 +34,18 @@ void fadeAnimationStep(
 	}
 }
 
-template<uint16_t transitionMs, const TProgmemRGBPalette16& palette, uint16_t durationMs, uint8_t repetitions, uint8_t cycles>
+template<
+	uint16_t transitionMs,
+	BuildAnimationPalette paletteFunc,
+	uint16_t durationMs,
+	uint8_t repetitions,
+	uint8_t cycles
+>
 FadeAnimationStep* fadeAnimation() {
 	static FadeAnimationStep params;
 
 	params.animationFunc = (AnimationSequenceStep) &fadeAnimationStep;
-	params.commonParams = commonParams<transitionMs, palette, durationMs, repetitions>();
+	params.commonParams = commonParams<transitionMs, paletteFunc, durationMs, repetitions>();
 	params.cycles = cycles;
 
 	return &params;

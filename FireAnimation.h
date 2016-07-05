@@ -91,7 +91,7 @@ void fireAnimationStep(
 
 template<
 	uint16_t transitionMs,
-	const TProgmemRGBPalette16& palette,
+	BuildAnimationPalette paletteFunc,
 	uint16_t durationMs,
 	uint8_t repetitions,
 	uint8_t size,
@@ -104,7 +104,7 @@ FireAnimationStep* fireAnimation() {
 	static uint8_t buffer[size];
 
 	params.animationFunc = (AnimationSequenceStep) &fireAnimationStep;
-	params.commonParams = commonParams<transitionMs, palette, durationMs, repetitions>();
+	params.commonParams = commonParams<transitionMs, paletteFunc, durationMs, repetitions>();
 	params.size = size;
 	params.cooling = cooling == 0 ? FIRE_DEFAULT_COOLING : cooling;
 	params.sparking = sparking == 0 ? FIRE_DEFAULT_SPARKING : sparking;

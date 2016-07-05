@@ -15,6 +15,34 @@
 struct AnimationStep;
 struct AnimationPlan;
 
+typedef void (*BuildAnimationPalette)(
+	CRGBPalette16& palette
+);
+
+template<const TProgmemRGBPalette16& palette> void usePalette(CRGBPalette16 &pal) {
+	pal = palette;
+}
+
+template<const CRGB a, const CRGB b> void useColors(CRGBPalette16 &pal) {
+	pal[0] = a;
+	pal[1] = a;
+	pal[2] = a;
+	pal[3] = a;
+	pal[4] = a;
+	pal[5] = a;
+	pal[6] = a;
+	pal[7] = a;
+
+	pal[8] = a;
+	pal[9] = a;
+	pal[10] = a;
+	pal[11] = a;
+	pal[12] = a;
+	pal[13] = a;
+	pal[14] = a;
+	pal[15] = a;
+}
+
 typedef void (*AnimationSequenceStep)(
 	AnimationStep* step,
 	CRGBPalette16& palette,
@@ -26,7 +54,7 @@ typedef void (*AnimationSequenceStep)(
 );
 
 struct AnimationStepCommonParams {
-	const TProgmemRGBPalette16& palette;
+	BuildAnimationPalette paletteFunc;
 
 	uint8_t durationPackedMs;
 	uint8_t transitionPackedMs;
@@ -45,10 +73,10 @@ struct AnimationStep {
 	}
 };
 
-template<uint16_t transitionMs, const TProgmemRGBPalette16& palette, uint16_t durationMs, uint8_t repetitions>
+template<uint16_t transitionMs, const BuildAnimationPalette paletteFunc, uint16_t durationMs, uint8_t repetitions>
 AnimationStepCommonParams* commonParams() {
 	static AnimationStepCommonParams params = {
-		.palette = palette,
+		.paletteFunc = paletteFunc,
 		.durationPackedMs = FAF_PACK_MS(durationMs),
 		.transitionPackedMs = FAF_PACK_MS(transitionMs),
 		.repetitions = repetitions
@@ -169,7 +197,7 @@ private:
 			transitionEndMs = first ? 0 : (millis() + step->transitionMs());
 
 			currentStepEndMs = millis() + step->durationMs();
-			currentPalette = step->commonParams->palette;
+			step->commonParams->paletteFunc(currentPalette);
 			remainingReps = max(1, step->commonParams->repetitions) - 1;
 		}
 	}

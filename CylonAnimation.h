@@ -83,7 +83,7 @@ void cylonAnimationStep(
 
 template<
 	uint16_t transitionMs,
-	const TProgmemRGBPalette16& palette,
+	BuildAnimationPalette paletteFunc,
 	uint16_t durationMs,
 	uint8_t repetitions,
 	uint8_t swipes,
@@ -95,7 +95,7 @@ CylonAnimationStep* cylonAnimation() {
 	static CylonAnimationStep params;
 
 	params.animationFunc = (AnimationSequenceStep) &cylonAnimationStep;
-	params.commonParams = commonParams<transitionMs, palette, durationMs, repetitions>();
+	params.commonParams = commonParams<transitionMs, paletteFunc, durationMs, repetitions>();
 	params.swipes = swipes;
 	params.width = width;
 	params.color = color;
