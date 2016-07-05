@@ -12,7 +12,6 @@ struct SwipeAnimationStep : public AnimationStep {
 void swipeAnimationStep(
 	SwipeAnimationStep* step,
 	CRGBPalette16& palette,
-	void* state,
 	uint16_t timeMs,
 	uint16_t startLed,
 	uint16_t endLed,
@@ -36,19 +35,19 @@ void swipeAnimationStep(
 	}
 }
 
-AnimationSequenceStep swipeAnimationSetup(
-	AnimationStep* stepInfo,
-	void* state
-) {
-	return (AnimationSequenceStep) &swipeAnimationStep;
-}
-
-
-template<uint16_t transitionMs, const TProgmemRGBPalette16& palette, uint16_t durationMs, uint8_t repetitions, bool leftToRight, uint8_t color1, uint8_t color2>
+template<
+	uint16_t transitionMs,
+	const TProgmemRGBPalette16& palette,
+	uint16_t durationMs,
+	uint8_t repetitions,
+	bool leftToRight,
+	uint8_t color1,
+	uint8_t color2
+>
 SwipeAnimationStep* swipeAnimation() {
 	static SwipeAnimationStep params;
 
-	params.animationFunc = &swipeAnimationSetup;
+	params.animationFunc = (AnimationSequenceStep) &swipeAnimationStep;
 	params.commonParams = commonParams<transitionMs, palette, durationMs, repetitions>();
 	params.leftToRight = leftToRight;
 	params.color1 = color1;

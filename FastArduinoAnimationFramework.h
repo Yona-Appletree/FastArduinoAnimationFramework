@@ -5,8 +5,6 @@
 #include <FastLED.h>
 #include <avr/pgmspace.h>
 
-const int animationStepStateSize = 4;
-
 /**
  * Macros for packing millisecond values into 8-bit integers. Each second is represented as 8 units, allowing for a total
  * of 32 seconds to be represented. Used for animation durations, where that level of precision is acceptable.
@@ -20,14 +18,12 @@ struct AnimationPlan;
 typedef void (*AnimationSequenceStep)(
 	AnimationStep* step,
 	CRGBPalette16& palette,
-	void* state,
 	fract16 timeMs,
 	uint16_t startLed,
 	uint16_t endLed,
 	CRGB* ledData,
 	uint16_t ledCount
 );
-typedef AnimationSequenceStep (*AnimationSequenceSetup)(AnimationStep* stepInfo, void* state);
 
 struct AnimationStepCommonParams {
 	const TProgmemRGBPalette16& palette;
@@ -38,7 +34,7 @@ struct AnimationStepCommonParams {
 };
 
 struct AnimationStep {
-	AnimationSequenceSetup animationFunc;
+	AnimationSequenceStep animationFunc;
 	AnimationStepCommonParams* commonParams;
 
 	inline uint16_t durationMs() {
@@ -89,10 +85,9 @@ public:
 		if (now < transitionEndMs) {
 			uint8_t transitionAmount = ((uint32_t)(step->transitionMs() - (transitionEndMs - millis())) << 8) / step->transitionMs();
 
-			currentStepFunc(
+			step->animationFunc(
 				step,
 				currentPalette,
-				currentStepState,
 				step->durationMs() - remainingMs,
 				0,
 				scale8(ledCount, transitionAmount),
@@ -139,10 +134,9 @@ public:
 //				}
 //			}
 		} else {
-			currentStepFunc(
+			step->animationFunc(
 				step,
 				currentPalette,
-				currentStepState,
 				step->durationMs() - remainingMs,
 				0,
 				ledCount,
@@ -174,7 +168,6 @@ private:
 
 			transitionEndMs = first ? 0 : (millis() + step->transitionMs());
 
-			currentStepFunc = step->animationFunc(step, currentStepState);
 			currentStepEndMs = millis() + step->durationMs();
 			currentPalette = step->commonParams->palette;
 			remainingReps = max(1, step->commonParams->repetitions) - 1;
@@ -187,10 +180,8 @@ private:
 	CRGB* ledData;
 	uint16_t ledCount;
 
-	AnimationSequenceStep currentStepFunc = NULL;
 	CRGBPalette16 currentPalette;
 	uint8_t currentStepIndex;
-	uint8_t currentStepState[animationStepStateSize];
 	uint32_t currentStepEndMs = 0;
 	uint32_t transitionEndMs = 0;
 	uint8_t remainingReps = 0;

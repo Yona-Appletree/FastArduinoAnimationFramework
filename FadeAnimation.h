@@ -10,7 +10,6 @@ struct FadeAnimationStep : public AnimationStep {
 void fadeAnimationStep(
 	FadeAnimationStep* step,
 	CRGBPalette16& palette,
-	void* state,
 	uint16_t timeMs,
 	uint16_t startLed,
 	uint16_t endLed,
@@ -35,19 +34,11 @@ void fadeAnimationStep(
 	}
 }
 
-AnimationSequenceStep fadeAnimationSetup(
-	AnimationStep* stepInfo,
-	void* state
-) {
-	return (AnimationSequenceStep) &fadeAnimationStep;
-}
-
-
 template<uint16_t transitionMs, const TProgmemRGBPalette16& palette, uint16_t durationMs, uint8_t repetitions, uint8_t cycles>
 FadeAnimationStep* fadeAnimation() {
 	static FadeAnimationStep params;
 
-	params.animationFunc = &fadeAnimationSetup;
+	params.animationFunc = (AnimationSequenceStep) &fadeAnimationStep;
 	params.commonParams = commonParams<transitionMs, palette, durationMs, repetitions>();
 	params.cycles = cycles;
 

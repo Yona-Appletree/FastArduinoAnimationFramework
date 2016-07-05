@@ -20,7 +20,6 @@ struct CylonAnimationStep : public AnimationStep {
 void cylonAnimationStep(
 	CylonAnimationStep* step,
 	CRGBPalette16& palette,
-	void* state,
 	uint16_t timeMs,
 	uint16_t startLed,
 	uint16_t endLed,
@@ -82,14 +81,6 @@ void cylonAnimationStep(
 	}
 }
 
-AnimationSequenceStep cylonAnimationSetup(
-	AnimationStep* stepInfo,
-	void* state
-) {
-	return (AnimationSequenceStep) &cylonAnimationStep;
-}
-
-
 template<
 	uint16_t transitionMs,
 	const TProgmemRGBPalette16& palette,
@@ -103,7 +94,7 @@ template<
 CylonAnimationStep* cylonAnimation() {
 	static CylonAnimationStep params;
 
-	params.animationFunc = &cylonAnimationSetup;
+	params.animationFunc = (AnimationSequenceStep) &cylonAnimationStep;
 	params.commonParams = commonParams<transitionMs, palette, durationMs, repetitions>();
 	params.swipes = swipes;
 	params.width = width;

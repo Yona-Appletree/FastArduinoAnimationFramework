@@ -11,7 +11,6 @@ struct BlinkAnimationStep : public AnimationStep {
 void blinkAnimationStep(
 	BlinkAnimationStep * step,
 	CRGBPalette16& palette,
-	void* state,
 	uint16_t timeMs,
 	uint16_t startLed,
 	uint16_t endLed,
@@ -29,18 +28,10 @@ void blinkAnimationStep(
 	}
 }
 
-AnimationSequenceStep blinkAnimationSetup(
-	AnimationStep* stepInfo,
-	void* state
-) {
-	return (AnimationSequenceStep) &blinkAnimationStep;
-}
-
-
 template<uint16_t transitionMs, const TProgmemRGBPalette16& palette, uint16_t durationMs, uint8_t repetitions, uint8_t aMs, uint8_t bMs>
 AnimationStep* blinkAnimation() {
 	static BlinkAnimationStep params;
-	params.animationFunc = &blinkAnimationSetup;
+	params.animationFunc = (AnimationSequenceStep) &blinkAnimationStep;
 	params.commonParams = commonParams<transitionMs, palette, durationMs, repetitions>();
 	params.aMs = aMs;
 	params.bMs = bMs;
