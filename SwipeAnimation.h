@@ -3,8 +3,15 @@
 
 #include "FastArduinoAnimationFramework.h"
 
+enum SwipeAnimationMode {
+	SolidSwipeLeftToRight,
+	SolidSwipeRightToLeft,
+	GradientSwipeIn,
+	GradientSwipeOut,
+};
+
 struct SwipeAnimationStep : public AnimationStep {
-	bool leftToRight;
+	SwipeAnimationMode mode;
 	uint8_t color1;
 	uint8_t color2;
 };
@@ -21,26 +28,34 @@ void swipeAnimationStep(
 	uint16_t durationMs = step->durationMs();
 	uint8_t startFrac = ((uint32_t)timeMs<<8) / durationMs;
 
-	if (step->leftToRight)
+	if (step->mode == SolidSwipeRightToLeft || step->mode == GradientSwipeOut)
 		startFrac = 255 - startFrac;
 
-	uint8_t changeLed = scale8(ledCount, startFrac);
+	uint8_t changeLed = scale8(ledCount, startFrac)+1;
 
-	CRGB color1 = ColorFromPalette(palette, step->color1);
-	CRGB color2 = ColorFromPalette(palette, step->color2);
 
-	CRGB* led = ledData + startLed;
-	for (uint16_t i=startLed; i<endLed; i++, led++) {
-		*led = i < changeLed ? color2 : color1;
+	if (step->mode == SolidSwipeLeftToRight || step->mode == SolidSwipeRightToLeft) {
+		CRGB color1 = ColorFromPalette(palette, step->color1);
+		CRGB color2 = ColorFromPalette(palette, step->color2);
+
+		CRGB *led = ledData + startLed;
+		for (uint16_t i = startLed; i < endLed; i++, led++) {
+			*led = i < changeLed ? color2 : color1;
+		}
+	} else {
+		CRGB *led = ledData + startLed;
+		for (uint16_t i = startLed; i < endLed; i++, led++) {
+			*led = i < changeLed ? ColorFromPalette(palette, i*255/ledCount+step->color1) : CRGB::Black;
+		}
 	}
 }
 
 template<
 	uint16_t transitionMs,
-	BuildAnimationPalette paletteFunc,
+	AnimationPalettePopulator paletteFunc,
 	uint16_t durationMs,
 	uint8_t repetitions,
-	bool leftToRight,
+	SwipeAnimationMode mode,
 	uint8_t color1,
 	uint8_t color2
 >
@@ -49,7 +64,7 @@ SwipeAnimationStep* swipeAnimation() {
 
 	params.animationFunc = (AnimationSequenceStep) &swipeAnimationStep;
 	params.commonParams = commonParams<transitionMs, paletteFunc, durationMs, repetitions>();
-	params.leftToRight = leftToRight;
+	params.mode = mode;
 	params.color1 = color1;
 	params.color2 = color2;
 

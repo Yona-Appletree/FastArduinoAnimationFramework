@@ -10,12 +10,15 @@
 #define CYLON_REVERSE (1<<4)
 
 struct CylonAnimationStep : public AnimationStep {
+	uint8_t bands;
+
 	uint8_t swipes;
 	uint8_t width;
 	uint8_t color;
 
 	uint8_t flags;
 };
+
 
 void cylonAnimationStep(
 	CylonAnimationStep* step,
@@ -27,9 +30,6 @@ void cylonAnimationStep(
     uint16_t ledCount
 ) {
 	bool bounceFlag = (step->flags & CYLON_BOUNCE) != 0;
-	bool fadeFlag = (step->flags & CYLON_FADE) != 0;
-	bool rotateColorsFlag = (step->flags & CYLON_ROTATE_COLORS) != 0;
-	bool showPaletteFlag = (step->flags & CYLON_SHOW_PALETTE) != 0;
 
 	uint8_t timeFrac = (((uint32_t)timeMs*255) / step->durationMs());
 
@@ -37,13 +37,18 @@ void cylonAnimationStep(
 		? cos8((uint16_t)timeFrac * step->swipes / 2)
 		: (uint16_t)timeFrac * step->swipes / 2;
 
+
+	bool fadeFlag = (step->flags & CYLON_FADE) != 0;
+	bool rotateColorsFlag = (step->flags & CYLON_ROTATE_COLORS) != 0;
+	bool showPaletteFlag = (step->flags & CYLON_SHOW_PALETTE) != 0;
+
 	if (step->flags & CYLON_REVERSE) {
 		baseBarFrac = 255 - baseBarFrac;
 	}
 
 	uint8_t barCenterFrac = bounceFlag
-		? step->width / 2 + scale8(255 - step->width, baseBarFrac)
-		: baseBarFrac;
+	                        ? step->width / 2 + scale8(255 - step->width, baseBarFrac)
+	                        : baseBarFrac;
 
 	uint16_t barLedCount = scale16by8(ledCount, step->width);
 	uint16_t centerBarLed = scale16by8(ledCount + (bounceFlag ? 0 : barLedCount*2), barCenterFrac);
@@ -83,7 +88,7 @@ void cylonAnimationStep(
 
 template<
 	uint16_t transitionMs,
-	BuildAnimationPalette paletteFunc,
+	AnimationPalettePopulator paletteFunc,
 	uint16_t durationMs,
 	uint8_t repetitions,
 	uint8_t swipes,
@@ -100,6 +105,7 @@ CylonAnimationStep* cylonAnimation() {
 	params.width = width;
 	params.color = color;
 	params.flags = flags;
+	params.bands = 2;
 
 	return &params;
 }

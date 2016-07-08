@@ -4,18 +4,19 @@
 #include <inttypes.h>
 #include <FastLED.h>
 #include <avr/pgmspace.h>
+#include <lib8tion.h>
 
 /**
  * Macros for packing millisecond values into 8-bit integers. Each second is represented as 8 units, allowing for a total
  * of 32 seconds to be represented. Used for animation durations, where that level of precision is acceptable.
  */
-#define FAF_PACK_MS(ms) (uint8_t)((ms * 8)/1000)
-#define FAF_UNPACK_MS(ms) (((uint16_t)ms * 1000)/8)
+#define FAF_PACK_MS(ms) (uint8_t)((ms * 4)/1000)
+#define FAF_UNPACK_MS(ms) (((uint16_t)ms * 1000)/4)
 
 struct AnimationStep;
 struct AnimationPlan;
 
-typedef void (*BuildAnimationPalette)(
+typedef void (*AnimationPalettePopulator)(
 	CRGBPalette16& palette
 );
 
@@ -23,24 +24,37 @@ template<const TProgmemRGBPalette16& palette> void usePalette(CRGBPalette16 &pal
 	pal = palette;
 }
 
-template<const CRGB a, const CRGB b> void useColors(CRGBPalette16 &pal) {
-	pal[0] = a;
-	pal[1] = a;
-	pal[2] = a;
-	pal[3] = a;
-	pal[4] = a;
-	pal[5] = a;
-	pal[6] = a;
-	pal[7] = a;
-
-	pal[8] = a;
-	pal[9] = a;
-	pal[10] = a;
-	pal[11] = a;
+template<const uint32_t a, const uint32_t b> void bandPalette(CRGBPalette16 &pal) {
+	for (uint8_t i=0; i<16; i+=2) {
+		pal[i+0] = a;
+		pal[i+1] = b;
+	}
+}
+template<const uint32_t a, const uint32_t b, const uint32_t c> void bandPalette(CRGBPalette16 &pal) {
+	pal[ 0] = a;
+	pal[ 1] = b;
+	pal[ 2] = c;
+	pal[ 3] = a;
+	pal[ 4] = b;
+	pal[ 5] = c;
+	pal[ 6] = a;
+	pal[ 7] = b;
+	pal[ 8] = c;
+	pal[ 9] = a;
+	pal[10] = b;
+	pal[11] = c;
 	pal[12] = a;
-	pal[13] = a;
-	pal[14] = a;
+	pal[13] = b;
+	pal[14] = c;
 	pal[15] = a;
+}
+template<const uint32_t a, const uint32_t b, const uint32_t c, const uint32_t d> void bandPalette(CRGBPalette16 &pal) {
+	for (uint8_t i=0; i<16; i+=4) {
+		pal[i+0] = a;
+		pal[i+1] = b;
+		pal[i+2] = c;
+		pal[i+3] = d;
+	}
 }
 
 typedef void (*AnimationSequenceStep)(
@@ -54,7 +68,7 @@ typedef void (*AnimationSequenceStep)(
 );
 
 struct AnimationStepCommonParams {
-	BuildAnimationPalette paletteFunc;
+	AnimationPalettePopulator paletteFunc;
 
 	uint8_t durationPackedMs;
 	uint8_t transitionPackedMs;
@@ -73,7 +87,7 @@ struct AnimationStep {
 	}
 };
 
-template<uint16_t transitionMs, const BuildAnimationPalette paletteFunc, uint16_t durationMs, uint8_t repetitions>
+template<uint16_t transitionMs, const AnimationPalettePopulator paletteFunc, uint16_t durationMs, uint8_t repetitions>
 AnimationStepCommonParams* commonParams() {
 	static AnimationStepCommonParams params = {
 		.paletteFunc = paletteFunc,
@@ -90,9 +104,10 @@ public:
 	LedAnimation(
 		AnimationStep** steps,
 		CRGB* ledData,
-		uint16_t ledCount
+		uint16_t ledCount,
+	    uint8_t stepOffset
 	): steps(steps),
-	   currentStepIndex(0),
+	   currentStepIndex(stepOffset),
 	   ledData(ledData),
 	   ledCount(ledCount)
 	{
@@ -219,5 +234,19 @@ private:
 //	AnimationSequenceStep prevStepFunc = NULL;
 //	uint8_t prevStepState[animationStepStateSize];
 };
+
+void mirrorLeds(
+	CRGB* leds,
+	uint16_t startLed,
+    uint16_t count
+) {
+
+	CRGB* source = leds + startLed;
+	CRGB* dest = leds + startLed + count + count - 1;
+
+	for (uint16_t i=0; i<count; i++, source++, dest--) {
+		*dest = *source;
+	}
+}
 
 #endif

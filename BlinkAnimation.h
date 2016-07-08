@@ -28,7 +28,7 @@ void blinkAnimationStep(
 	}
 }
 
-template<uint16_t transitionMs, BuildAnimationPalette paletteFunc, uint16_t durationMs, uint8_t repetitions, uint8_t aMs, uint8_t bMs>
+template<uint16_t transitionMs, AnimationPalettePopulator paletteFunc, uint16_t durationMs, uint8_t repetitions, uint8_t aMs, uint8_t bMs>
 AnimationStep* blinkAnimation() {
 	static BlinkAnimationStep params;
 	params.animationFunc = (AnimationSequenceStep) &blinkAnimationStep;

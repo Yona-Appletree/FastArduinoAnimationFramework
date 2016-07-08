@@ -36,7 +36,7 @@ void fadeAnimationStep(
 
 template<
 	uint16_t transitionMs,
-	BuildAnimationPalette paletteFunc,
+	AnimationPalettePopulator paletteFunc,
 	uint16_t durationMs,
 	uint8_t repetitions,
 	uint8_t cycles
