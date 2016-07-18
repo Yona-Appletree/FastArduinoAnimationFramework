@@ -20,9 +20,14 @@ typedef void (*AnimationPalettePopulator)(
 	CRGBPalette16& palette
 );
 
-template<const TProgmemRGBPalette16& palette> void usePalette(CRGBPalette16 &pal) {
+template<const TProgmemRGBPalette16& palette> void palette16(CRGBPalette16 &pal) {
 	pal = palette;
 }
+
+template<const TProgmemRGBGradientPalette_bytes palette> void paletteGradiant(CRGBPalette16 &pal) {
+	pal = palette;
+}
+
 
 template<const uint32_t a, const uint32_t b> void bandPalette(CRGBPalette16 &pal) {
 	for (uint8_t i=0; i<16; i+=2) {
