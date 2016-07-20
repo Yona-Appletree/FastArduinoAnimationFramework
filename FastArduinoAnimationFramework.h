@@ -189,7 +189,6 @@ public:
 		}
 	}
 
-private:
 	void nextStep(bool first) {
 		if (remainingReps > 0 || (!first && currentStepIndex == 0 && !steps[currentStepIndex+1])) {
 			currentStepEndMs = millis() + steps[currentStepIndex]->durationMs() - 1;

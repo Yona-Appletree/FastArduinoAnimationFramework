@@ -3,185 +3,146 @@
 
 #include <FastLED.h>
 
-// Gradient palette "bhw1_01_gp", originally from
-// http://soliton.vm.bytemark.co.uk/pub/cpt-city/bhw/bhw1/tn/bhw1_01.png.index.html
+#define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
+#define PALETTE_SET(...) if (1) { \
+		static TProgmemRGBGradientPalette_bytes pals[] = { __VA_ARGS__ };\
+		if (paletteSetIndex == p++) { pal = pals[random8() % ARRAY_SIZE(pals)]; return; } \
+	}
+
+// Gradient palette "pjs_gp", originally from
+// http://soliton.vm.bytemark.co.uk/pub/cpt-city/pj/classic/tn/pjs.png.index.html
 // converted for FastLED with gammas (2.6, 2.2, 2.5)
-// Size: 12 bytes of program space.
+// Size: 48 bytes of program space.
+DEFINE_GRADIENT_PALETTE( pjs_gp ) {
+	0, 201,  0,132,
+	21, 227,  0, 23,
+	22, 255,  0,  0,
+	45, 255, 53,  0,
+	63, 255,246,  0,
+	99,   1,118,  6,
+	140,   0,211,255,
+	172,   0, 46,138,
+	193,   0,  1, 61,
+	214,  32,  1, 92,
+	239, 201,  0,132,
+	255, 201,  0,132};
 
-DEFINE_GRADIENT_PALETTE( bhw1_01_gp ) {
-	0, 227,101,  3,
-	117, 194, 18, 19,
-	255,  92,  8,192};
 
-// Gradient palette "bhw1_26_gp", originally from
-// http://soliton.vm.bytemark.co.uk/pub/cpt-city/bhw/bhw1/tn/bhw1_26.png.index.html
+
+// Gradient palette "revchak_gp", originally from
+// http://soliton.vm.bytemark.co.uk/pub/cpt-city/pj/classic/tn/revchak.png.index.html
 // converted for FastLED with gammas (2.6, 2.2, 2.5)
-// Size: 52 bytes of program space.
+// Size: 48 bytes of program space.
+DEFINE_GRADIENT_PALETTE( revchak_gp ) {
+	0, 237,  1,  9,
+	13, 244,  8, 19,
+	35, 249, 21, 34,
+	54, 150,  6, 83,
+	73,  78,  1,156,
+	107,  16, 13,255,
+	140,   1,156,186,
+	168,   9,144, 36,
+	198, 242,217,  1,
+	224, 239, 57,  1,
+	249, 239,  8,  5,
+	255, 239,  8,  5};
 
-DEFINE_GRADIENT_PALETTE( bhw1_26_gp ) {
-	0, 107,  1,205,
-	35, 255,255,255,
-	73, 107,  1,205,
-	107,  10,149,210,
-	130, 255,255,255,
-	153,  10,149,210,
-	170,  27,175,119,
-	198,  53,203, 56,
-	207, 132,229,135,
-	219, 255,255,255,
-	231, 132,229,135,
-	252,  53,203, 56,
-	255,  53,203, 56};
 
-// Gradient palette "bhw1_sunconure_gp", originally from
-// http://soliton.vm.bytemark.co.uk/pub/cpt-city/bhw/bhw1/tn/bhw1_sunconure.png.index.html
-// converted for FastLED with gammas (2.6, 2.2, 2.5)
-// Size: 16 bytes of program space.
-
-DEFINE_GRADIENT_PALETTE( bhw1_sunconure_gp ) {
-	0,  20,223, 13,
-	160, 232, 65,  1,
-	252, 232,  5,  1,
-	255, 232,  5,  1};
-// Gradient palette "bhw1_04_gp", originally from
-// http://soliton.vm.bytemark.co.uk/pub/cpt-city/bhw/bhw1/tn/bhw1_04.png.index.html
+// Gradient palette "passionata_gp", originally from
+// http://soliton.vm.bytemark.co.uk/pub/cpt-city/pj/classic/tn/passionata.png.index.html
 // converted for FastLED with gammas (2.6, 2.2, 2.5)
 // Size: 20 bytes of program space.
+DEFINE_GRADIENT_PALETTE( passionata_gp ) {
+	0, 217,  4,102,
+	66, 217,  4, 61,
+	122, 217,  4,  5,
+	186, 161,  4,219,
+	255,  78,  4,219};
 
-DEFINE_GRADIENT_PALETTE( bhw1_04_gp ) {
-	0, 229,227,  1,
-	15, 227,101,  3,
-	142,  40,  1, 80,
-	198,  17,  1, 79,
-	255,   0,  0, 45};
 
-// Gradient palette "bhw3_61_gp", originally from
-// http://soliton.vm.bytemark.co.uk/pub/cpt-city/bhw/bhw3/tn/bhw3_61.png.index.html
-// converted for FastLED with gammas (2.6, 2.2, 2.5)
-// Size: 24 bytes of program space.
 
-DEFINE_GRADIENT_PALETTE( bhw3_61_gp ) {
-	0,  14,  1, 27,
-	48,  17,  1, 88,
-	104,   1, 88,156,
-	160,   1, 54, 42,
-	219,   9,235, 52,
-	255, 139,235,233};
-
-// Gradient palette "purplepassion1_gp", originally from
-// http://soliton.vm.bytemark.co.uk/pub/cpt-city/pj/5/tn/purplepassion1.png.index.html
+// Gradient palette "sunlitwave_gp", originally from
+// http://soliton.vm.bytemark.co.uk/pub/cpt-city/rc/tn/sunlitwave.png.index.html
 // converted for FastLED with gammas (2.6, 2.2, 2.5)
 // Size: 32 bytes of program space.
+DEFINE_GRADIENT_PALETTE( sunlitwave_gp ) {
+	0,   5,  9, 84,
+	45,  37, 24,111,
+	81,  16,  5, 59,
+	112,  24,  1, 20,
+	150,  34,  1,  2,
+	198, 175, 36,  7,
+	237, 208,104, 16,
+	255, 239,211,158};
 
-DEFINE_GRADIENT_PALETTE( purplepassion1_gp ) {
-	0,  21,  4,132,
-	53,  33,  4,100,
-	89,  50,  1,100,
-	107,  71,  1, 74,
-	135,  97,  1, 74,
-	160,  19,  5, 21,
-	211,  50,  1,100,
-	255,  21,  4,132};
 
-// Gradient palette "anharmi_gp", originally from
-// http://soliton.vm.bytemark.co.uk/pub/cpt-city/pj/4/tn/anharmi.png.index.html
+// Gradient palette "trove_gp", originally from
+// http://soliton.vm.bytemark.co.uk/pub/cpt-city/rc/tn/trove.png.index.html
 // converted for FastLED with gammas (2.6, 2.2, 2.5)
-// Size: 24 bytes of program space.
+// Size: 84 bytes of program space.
+DEFINE_GRADIENT_PALETTE( trove_gp ) {
+	0,  12, 23, 11,
+	12,   8, 52, 27,
+	25,  32,142, 64,
+	38,  55, 68, 30,
+	51, 190,135, 45,
+	63, 201,175, 59,
+	76, 186, 80, 20,
+	89, 220, 79, 32,
+	101, 184, 33, 14,
+	114, 137, 16, 15,
+	127, 118, 20, 27,
+	140,  79, 16, 35,
+	153,  67,  8, 26,
+	165,  22,  9, 42,
+	178,  11,  3, 34,
+	191,  58, 31,109,
+	204, 186, 49, 83,
+	216, 182, 25, 55,
+	229,  39, 90,100,
+	242,  15, 81,132,
+	255,  68,135, 52};
 
-DEFINE_GRADIENT_PALETTE( anharmi_gp ) {
-	0,  75, 18,182,
-	56, 128, 10,103,
-	109, 132,175,203,
-	163,  47,  7,180,
-	209,  10, 30,158,
-	255,   5, 31,102};
 
-
-// Gradient palette "dances_with_fairies_gp", originally from
-// http://soliton.vm.bytemark.co.uk/pub/cpt-city/pj/1/tn/dances-with-fairies.png.index.html
+// Gradient palette "Sunset_Real_gp", originally from
+// http://soliton.vm.bytemark.co.uk/pub/cpt-city/nd/atmospheric/tn/Sunset_Real.png.index.html
 // converted for FastLED with gammas (2.6, 2.2, 2.5)
-// Size: 56 bytes of program space.
-
-DEFINE_GRADIENT_PALETTE( dances_with_fairies_gp ) {
-	0, 227,219,135,
-	17, 175,166, 42,
-	35, 227,128, 64,
-	56, 239, 96,117,
-	79, 239,128,228,
-	96, 188, 70,145,
-	117, 175, 70,145,
-	140,  67,128,240,
-	163,  55, 22,255,
-	186,  44, 96,240,
-	206,  35,219,135,
-	224,  55,231, 92,
-	244, 175,219,108,
-	255, 175,219,108};
+// Size: 28 bytes of program space.
 
 
-// Gradient palette "bhw4_029_gp", originally from
-// http://soliton.vm.bytemark.co.uk/pub/cpt-city/bhw/bhw4/tn/bhw4_029.png.index.html
-// converted for FastLED with gammas (2.6, 2.2, 2.5)
-// Size: 24 bytes of program space.
+DEFINE_GRADIENT_PALETTE( Sunset_Real_gp ) {
+	0, 120,  0,  0,
+	22, 179, 22,  0,
+	51, 255,104,  0,
+	85, 167, 22, 18,
+	135, 100,  0,103,
+	198,  16,  0,130,
+	255,   0,  0,160};
 
-DEFINE_GRADIENT_PALETTE( bhw4_029_gp ) {
-	0,  28,  7, 75,
-	43,  73, 22, 74,
-	79, 177,146,197,
-	122,  21, 72,137,
-	165,  15,184, 75,
-	255, 224,205,  4};
-
-// Gradient palette "bhw4_028_gp", originally from
-// http://soliton.vm.bytemark.co.uk/pub/cpt-city/bhw/bhw4/tn/bhw4_028.png.index.html
-// converted for FastLED with gammas (2.6, 2.2, 2.5)
-// Size: 40 bytes of program space.
-
-DEFINE_GRADIENT_PALETTE( bhw4_028_gp ) {
-	0,  73, 22, 74,
-	25,   7, 78,186,
-	61, 128,162,201,
-	81,  88, 99,151,
-	101, 155,107,140,
-	140, 159, 25,  1,
-	170, 208,207, 60,
-	198, 173, 20, 38,
-	232, 169, 12, 16,
-	255,  49, 10, 31};
-
-// Gradient palette "bhw1_w00t_gp", originally from
-// http://soliton.vm.bytemark.co.uk/pub/cpt-city/bhw/bhw1/tn/bhw1_w00t.png.index.html
-// converted for FastLED with gammas (2.6, 2.2, 2.5)
-// Size: 16 bytes of program space.
-
-DEFINE_GRADIENT_PALETTE( bhw1_w00t_gp ) {
-	0,   3, 13, 43,
-	104,  78,141,240,
-	188, 255,  0,  0,
-	255,  28,  1,  1};
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+DEFINE_GRADIENT_PALETTE( Red_Flat_1_gp ) {
+	0, 255,  1,  0,
+	255, 255,  1,  0};
 
 
-void randomPalette(CRGBPalette16 &pal) {
-	switch (random8() % 10) {
-		case 0: pal = bhw1_01_gp; break;
-		case 1: pal = bhw1_26_gp; break;
-		case 2: pal = bhw1_sunconure_gp; break;
-		case 3: pal = bhw1_04_gp; break;
-		case 4: pal = purplepassion1_gp; break;
-		case 5: pal = bhw3_61_gp; break;
-		case 6: pal = bhw4_028_gp; break;
-		case 7: pal = bhw4_029_gp; break;
-		case 8: pal = dances_with_fairies_gp; break;
-		case 9: pal = anharmi_gp; break;
-	}
+
+static uint8_t paletteSetIndex = 0;
+void paletteFromSet(CRGBPalette16 &pal) {
+	uint8_t p = 0;
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// Palette Definitions
+
+	PALETTE_SET(pjs_gp, revchak_gp, passionata_gp, sunlitwave_gp, trove_gp, Sunset_Real_gp);
+	PALETTE_SET(Red_Flat_1_gp);
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	paletteSetIndex = 0;
+	paletteFromSet(pal);
 }
-
-void owlEyePalette(CRGBPalette16 &pal) {
-	switch (random8() % 3) {
-		case 0: pal = bhw1_04_gp; break;
-		case 1: pal = purplepassion1_gp; break;
-		case 2: pal = bhw1_01_gp; break;
-	}
+void nextPaletteSet() {
+	paletteSetIndex ++;
 }
 
 #endif
