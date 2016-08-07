@@ -11,15 +11,20 @@ void pauseAnimationStep(
 	uint16_t endLed,
 	CRGB* ledData,
     uint16_t ledCount
-) {}
+) {
+	CRGB* led = ledData + startLed;
+	for (int16_t i=startLed; i<endLed; i++, led++) {
+		*led = CRGB::Black;
+	}
+}
 
 void nopPalette(CRGBPalette16 &pal) {}
 
-template<uint16_t durationMs> AnimationStep* pauseAnimation() {
+template<uint16_t transitionMs, uint16_t durationMs> AnimationStep* pauseAnimation() {
 	static AnimationStep params;
 
 	params.animationFunc = &pauseAnimationStep;
-	params.commonParams = commonParams<0, &nopPalette, durationMs, 1>();
+	params.commonParams = commonParams<transitionMs, &nopPalette, durationMs, 1>();
 
 	return &params;
 }

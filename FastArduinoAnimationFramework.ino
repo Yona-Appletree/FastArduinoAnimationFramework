@@ -7,69 +7,120 @@
 #include "FireAnimation.h"
 #include "PauseAnimation.h"
 #include "cptPalettes.h"
-#include <colorpalettes.h>
+#include "Button.h"
 
-#define LED_COUNT 5
+#define LED_COUNT 22
+
+#define MODE_SWITCH_PIN 6
+#define COLOR_SWITCH_PIN 7
+#define BRIGHT_SWITCH_PIN 8
 
 CRGB strip1[LED_COUNT]; // Right Eye
 
-AnimationStep* testSteps[] = {
-	//blinkAnimation<400, &usePalette<ForestColors_p>, 2000, 1, /* aMs */100, /* bMs */500>(),
-	//fadeAnimation<400, &usePalette<RainbowColors_p>, 2000, 1, /* reps */2>(),
-	//fadeAnimation<200, &usePalette<RainbowStripeColors_p>, 5000, 1, /* reps */1>(),
-	//fadeAnimation<200, &usePalette<HeatColors_p>, 5000, 1, /* reps */1>(),
+Button modeButton(MODE_SWITCH_PIN, true, true, 100);
+Button colorButton(COLOR_SWITCH_PIN, true, true, 100);
+Button brightButton(BRIGHT_SWITCH_PIN, true, true, 100);
 
-	//      transition  color &usePalette<   time rep animation specific params
+template <AnimationStep* ... steps> AnimationStep** animationArray() {
+	static AnimationStep* values[sizeof...(steps) + 1] = { steps..., NULL };
+}
 
-//	swipeAnimation<1000, &randomPalette, 5000, 1, GradientSwipeIn, 0, 16>(),
-//    pauseAnimation<1000>(),
-//	swipeAnimation<1000, &randomPalette, 5000, 1, GradientSwipeOut, 0, 16>(),
-
-	fadeAnimation<1000, &randomPalette, 5000, 1, /* reps */1>(),
-	//fadeAnimation<1000, &randomPalette, 3000, 1, /* reps */3>(),
-	//fadeAnimation<1000, &randomPalette, 5000, 1, /* reps */2>(),
-
-	cylonAnimation<1000, &randomPalette, 5000, 1, /*swipes*/10, /*width*/255/2, /*color*/(1*255)/6, /*flags*/CYLON_BOUNCE | CYLON_SHOW_PALETTE>(),
-	cylonAnimation<1000, &randomPalette, 5000, 1, /*swipes*/8, /*width*/255/2, /*color*/(1*255)/6, /*flags*/CYLON_ROTATE_COLORS>(),
-//	cylonAnimation<1000, &owlEyePalette, 10000, 1, /*swipes*/20, /*width*/255/2, /*color*/(1*255)/6, /*flags*/CYLON_REVERSE | CYLON_FADE | CYLON_ROTATE_COLORS | CYLON_SHOW_PALETTE>(),
-
-	//fadeAnimation<1000, &randomPalette, 7000, 2, /* reps */1>(),
-
-//	fireAnimation< 500, &usePalette<HeatColors_p>, 10000, 1, /*size*/32, /*cooling*/85, /*sparking*/64>(),
-//	fireAnimation< 500, &usePalette<ForestColors_p>, 5000, 1, /*size*/32, /*cooling*/50, /*sparking*/90>(),
+AnimationStep* fadeSteps[] = {
+	fadeAnimation<1000, &paletteFromSet, 10000, 1, /* reps */1>(),
+	fadeAnimation<1000, &paletteFromSet, 10000, 1, /* reps */1>(),
 	NULL
 };
-LedAnimation animation1(testSteps, strip1, LED_COUNT, 0);
 
+AnimationStep* cylonSteps[] = {
+	cylonAnimation<1000, &paletteFromSet, 5000, 1, /*swipes*/10, /*width*/255/2, /*color*/(1*255)/6, /*flags*/CYLON_BOUNCE | CYLON_SHOW_PALETTE>(),
+	cylonAnimation<1000, &paletteFromSet, 10000, 1, /*swipes*/8, /*width*/255/2, /*color*/(1*255)/6, /*flags*/CYLON_ROTATE_COLORS | CYLON_FADE>(),
+	cylonAnimation<1000, &paletteFromSet, 10000, 1, /*swipes*/20, /*width*/255/2, /*color*/(1*255)/6, /*flags*/CYLON_REVERSE | CYLON_FADE | CYLON_ROTATE_COLORS | CYLON_SHOW_PALETTE>(),
+	NULL
+};
+
+AnimationStep* fireSteps[] = {
+	fireAnimation< 1000, &paletteFromSet, 10000, 1, /*size*/16, /*cooling*/85, /*sparking*/64>(),
+	NULL
+};
+
+uint8_t stepSetIndex = 0;
+AnimationStep** stepSets[] = {
+	fadeSteps,
+	cylonSteps,
+	fireSteps,
+	NULL
+};
+
+LedAnimation animation1(fadeSteps, strip1, LED_COUNT, 0);
 
 //template<int s> struct CompileSizeOf;
 //CompileSizeOf<sizeof(AnimationStep)> wow;
 
+uint8_t brightnessIndex = 2;
+uint8_t brightnesses[] = {
+	0, 32, 255
+};
+
 void setup() {
+	pinMode(0, OUTPUT);
+
 	FastLED.setCorrection(TypicalSMD5050);
+	FastLED.addLeds<APA102, SPI_DATA, SPI_CLOCK, GRB, DATA_RATE_MHZ(8)>(strip1, LED_COUNT);
+	FastLED.setDither(BINARY_DITHER);
 
-	//FastLED.setBrightness(64);
-
-	FastLED.addLeds<WS2811Controller800Khz, 3, GRB>(strip1, LED_COUNT);
-
-	FastLED.setMaxRefreshRate(30, true);
+	Serial.begin(115200);
+	Serial.println("START");
 }
 
-uint8_t c = 0;
+void checkButtons();
 void loop() {
+	uint32_t start = millis();
+
+	checkButtons();
+	FastLED.setBrightness(brightnesses[brightnessIndex]);
+
 	animation1.loop();
-
-//	strip1[74] = CRGB::Red;
-//	strip2[74] = CRGB::Red;
-//	strip3[74] = CRGB::Red;
-
-//	mirrorLeds(st
-
-//	for (uint8_t i=0; i<150; i++) {
-//		strip1[i] = CRGB::Red;
-//		strip2[i] = CRGB::Green;
-//		strip3[i] = CRGB::Blue;
-//	}
-
 	FastLED.show();
+
+	uint32_t duration = millis() - start;
+	FastLED.delay(duration > 33 ? 0 : 33 - duration);
+}
+
+void checkButtons() {
+	modeButton.read();
+	colorButton.read();
+	brightButton.read();
+
+	if (brightButton.wasReleased()) Serial.println("Bright Pressed");
+	if (colorButton.wasReleased()) Serial.println("Color Pressed");
+	if (modeButton.wasReleased()) Serial.println("Mode Pressed");
+
+	if (brightButton.wasReleased()) {
+		brightnessIndex++;
+	}
+
+	if (colorButton.wasReleased()) {
+		if (brightnessIndex == 0) {
+			brightnessIndex ++;
+		} else {
+			nextPaletteSet();
+			animation1.updatePalette();
+		}
+	}
+
+	if (modeButton.wasReleased()) {
+		if (brightnessIndex == 0) {
+			brightnessIndex ++;
+		} else {
+			stepSetIndex ++;
+			if (! stepSets[stepSetIndex]) {
+				stepSetIndex = 0;
+			}
+			animation1.setSteps(stepSets[stepSetIndex]);
+		}
+	}
+
+	if (brightnessIndex >= sizeof(brightnesses)) {
+		brightnessIndex = 0;
+	}
 }

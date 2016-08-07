@@ -189,10 +189,25 @@ public:
 		}
 	}
 
+	void setSteps(
+		AnimationStep** newSteps
+	) {
+		steps = newSteps;
+		currentStepIndex = 0;
+		nextStep(true);
+	}
+
+	void updatePalette() {
+		steps[currentStepIndex]->commonParams->paletteFunc(currentPalette);
+	}
+
 private:
 	void nextStep(bool first) {
-		if (remainingReps > 0 || (!first && currentStepIndex == 0 && !steps[currentStepIndex+1])) {
-			currentStepEndMs = millis() + steps[currentStepIndex]->durationMs() - 1;
+		if (!first && (remainingReps > 0 || (currentStepIndex == 0 && !steps[1]))) {
+			AnimationStep* step = steps[currentStepIndex];
+
+			currentStepEndMs = millis() + step->durationMs() - 1;
+			step->commonParams->paletteFunc(currentPalette);
 			remainingReps --;
 		} else {
 //			prevStep = currentStep;
@@ -217,7 +232,6 @@ private:
 		}
 	}
 
-private:
 	AnimationStep** steps;
 
 	CRGB* ledData;

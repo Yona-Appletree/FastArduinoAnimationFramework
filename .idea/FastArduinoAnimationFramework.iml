@@ -73,6 +73,9 @@
     <content url="file:///Applications/Arduino 1.6.5.app/Contents/Java/hardware/arduino/avr/cores/arduino/wiring_shift.c">
       <sourceFolder url="file:///Applications/Arduino 1.6.5.app/Contents/Java/hardware/arduino/avr/cores/arduino/wiring_shift.c" isTestSource="false" />
     </content>
+    <content url="file://$USER_HOME$/Documents/Arduino/libraries/Button/Button.cpp">
+      <sourceFolder url="file://$USER_HOME$/Documents/Arduino/libraries/Button/Button.cpp" isTestSource="false" />
+    </content>
     <content url="file://$USER_HOME$/Documents/Arduino/libraries/FastLED/FastLED.cpp">
       <sourceFolder url="file://$USER_HOME$/Documents/Arduino/libraries/FastLED/FastLED.cpp" isTestSource="false" />
     </content>
@@ -126,6 +129,7 @@
     <orderEntry type="module-library">
       <library name="Header Search Paths">
         <CLASSES>
+          <root url="file://$USER_HOME$/Documents/Arduino/libraries/Button" />
           <root url="file://$USER_HOME$/Documents/Arduino/libraries/FastLED" />
           <root url="file:///Applications/Arduino.app/Contents/Java/libraries" />
           <root url="file:///Applications/Arduino 1.6.5.app/Contents/Java/hardware/tools/avr/lib/gcc/avr/4.8.1/include" />
@@ -135,6 +139,7 @@
           <root url="file:///Applications/Arduino 1.6.5.app/Contents/Java/hardware/arduino/avr/cores/arduino" />
         </CLASSES>
         <SOURCES>
+          <root url="file://$USER_HOME$/Documents/Arduino/libraries/Button" />
           <root url="file://$USER_HOME$/Documents/Arduino/libraries/FastLED" />
           <root url="file:///Applications/Arduino.app/Contents/Java/libraries" />
           <root url="file:///Applications/Arduino 1.6.5.app/Contents/Java/hardware/tools/avr/lib/gcc/avr/4.8.1/include" />
@@ -144,6 +149,7 @@
           <root url="file:///Applications/Arduino 1.6.5.app/Contents/Java/hardware/arduino/avr/cores/arduino" />
         </SOURCES>
         <excluded>
+          <root url="file://$USER_HOME$/Documents/Arduino/libraries/Button/Button.cpp" />
           <root url="file://$USER_HOME$/Documents/Arduino/libraries/FastLED/hsv2rgb.cpp" />
           <root url="file://$USER_HOME$/Documents/Arduino/libraries/FastLED/wiring.cpp" />
           <root url="file://$USER_HOME$/Documents/Arduino/libraries/FastLED/colorpalettes.cpp" />
@@ -156,24 +162,24 @@
           <root url="file:///Applications/Arduino 1.6.5.app/Contents/Java/hardware/arduino/avr/cores/arduino/Stream.cpp" />
           <root url="file:///Applications/Arduino 1.6.5.app/Contents/Java/hardware/arduino/avr/cores/arduino/USBCore.cpp" />
           <root url="file:///Applications/Arduino 1.6.5.app/Contents/Java/hardware/arduino/avr/cores/arduino/WMath.cpp" />
-          <root url="file:///Applications/Arduino 1.6.5.app/Contents/Java/hardware/arduino/avr/cores/arduino/wiring.c" />
-          <root url="file:///Applications/Arduino 1.6.5.app/Contents/Java/hardware/arduino/avr/cores/arduino/abi.cpp" />
+          <root url="file:///Applications/Arduino 1.6.5.app/Contents/Java/hardware/arduino/avr/cores/arduino/wiring_analog.c" />
+          <root url="file:///Applications/Arduino 1.6.5.app/Contents/Java/hardware/arduino/avr/cores/arduino/wiring_pulse.c" />
           <root url="file:///Applications/Arduino 1.6.5.app/Contents/Java/hardware/arduino/avr/cores/arduino/HardwareSerial.cpp" />
           <root url="file:///Applications/Arduino 1.6.5.app/Contents/Java/hardware/arduino/avr/cores/arduino/IPAddress.cpp" />
           <root url="file:///Applications/Arduino 1.6.5.app/Contents/Java/hardware/arduino/avr/cores/arduino/hooks.c" />
           <root url="file:///Applications/Arduino 1.6.5.app/Contents/Java/hardware/arduino/avr/cores/arduino/CDC.cpp" />
           <root url="file:///Applications/Arduino 1.6.5.app/Contents/Java/hardware/arduino/avr/cores/arduino/wiring_shift.c" />
-          <root url="file:///Applications/Arduino 1.6.5.app/Contents/Java/hardware/arduino/avr/cores/arduino/wiring_pulse.c" />
+          <root url="file:///Applications/Arduino 1.6.5.app/Contents/Java/hardware/arduino/avr/cores/arduino/abi.cpp" />
+          <root url="file:///Applications/Arduino 1.6.5.app/Contents/Java/hardware/arduino/avr/cores/arduino/HardwareSerial2.cpp" />
           <root url="file:///Applications/Arduino 1.6.5.app/Contents/Java/hardware/arduino/avr/cores/arduino/HID.cpp" />
           <root url="file:///Applications/Arduino 1.6.5.app/Contents/Java/hardware/arduino/avr/cores/arduino/Tone.cpp" />
           <root url="file:///Applications/Arduino 1.6.5.app/Contents/Java/hardware/arduino/avr/cores/arduino/new.cpp" />
           <root url="file:///Applications/Arduino 1.6.5.app/Contents/Java/hardware/arduino/avr/cores/arduino/main.cpp" />
           <root url="file:///Applications/Arduino 1.6.5.app/Contents/Java/hardware/arduino/avr/cores/arduino/HardwareSerial3.cpp" />
-          <root url="file:///Applications/Arduino 1.6.5.app/Contents/Java/hardware/arduino/avr/cores/arduino/HardwareSerial2.cpp" />
+          <root url="file:///Applications/Arduino 1.6.5.app/Contents/Java/hardware/arduino/avr/cores/arduino/wiring.c" />
           <root url="file:///Applications/Arduino 1.6.5.app/Contents/Java/hardware/arduino/avr/cores/arduino/HardwareSerial1.cpp" />
           <root url="file:///Applications/Arduino 1.6.5.app/Contents/Java/hardware/arduino/avr/cores/arduino/HardwareSerial0.cpp" />
           <root url="file:///Applications/Arduino 1.6.5.app/Contents/Java/hardware/arduino/avr/cores/arduino/WString.cpp" />
-          <root url="file:///Applications/Arduino 1.6.5.app/Contents/Java/hardware/arduino/avr/cores/arduino/wiring_analog.c" />
           <root url="file:///Applications/Arduino 1.6.5.app/Contents/Java/hardware/arduino/avr/cores/arduino/WInterrupts.c" />
           <root url="file:///Applications/Arduino 1.6.5.app/Contents/Java/hardware/arduino/avr/cores/arduino/Print.cpp" />
         </excluded>
