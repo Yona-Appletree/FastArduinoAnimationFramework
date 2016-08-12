@@ -9,7 +9,7 @@
 #include "cptPalettes.h"
 #include "Button.h"
 
-#define LED_COUNT 22
+#define LED_COUNT 24
 
 #define MODE_SWITCH_PIN 6
 #define COLOR_SWITCH_PIN 7
@@ -65,7 +65,8 @@ void setup() {
 	pinMode(0, OUTPUT);
 
 	FastLED.setCorrection(TypicalSMD5050);
-	FastLED.addLeds<APA102, SPI_DATA, SPI_CLOCK, GRB, DATA_RATE_MHZ(8)>(strip1, LED_COUNT);
+	//FastLED.addLeds<APA102, SPI_DATA, SPI_CLOCK, GRB, DATA_RATE_MHZ(8)>(strip1, LED_COUNT);
+	FastLED.addLeds<WS2811Controller800Khz, 3, GRB>(strip1, LED_COUNT);
 	FastLED.setDither(BINARY_DITHER);
 
 	Serial.begin(115200);
