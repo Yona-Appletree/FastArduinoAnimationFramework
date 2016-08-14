@@ -678,6 +678,7 @@ function(REGISTER_HARDWARE_PLATFORM PLATFORM_PATH)
                 NAMES boards.txt
                 PATHS ${PLATFORM_PATH}
                 DOC "Path to Arduino boards definition file.")
+            message("BoardsPath: ${${PLATFORM}_BOARDS_PATH}")
 
             if(${PLATFORM}_BOARDS_PATH)
                 load_arduino_style_settings(${PLATFORM}_BOARDS "${PLATFORM_PATH}/boards.txt")
@@ -783,6 +784,8 @@ endfunction()
 #
 #=============================================================================#
 function(get_arduino_flags COMPILE_FLAGS_VAR LINK_FLAGS_VAR BOARD_ID MANUAL)
+
+    message("Board: ${${BOARD_ID}.build.core}")
    
     set(BOARD_CORE ${${BOARD_ID}.build.core})
     if(BOARD_CORE)

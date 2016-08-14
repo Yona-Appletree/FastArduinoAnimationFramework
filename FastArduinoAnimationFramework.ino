@@ -9,13 +9,17 @@
 #include "cptPalettes.h"
 #include "Button.h"
 
-#define LED_COUNT 24
+#define BODY_LED_COUNT 120
+#define BASKET_LED_COUNT 60
+#define AUX_LED_COUNT 20
 
-#define MODE_SWITCH_PIN 6
-#define COLOR_SWITCH_PIN 7
-#define BRIGHT_SWITCH_PIN 8
+#define MODE_SWITCH_PIN 2
+#define COLOR_SWITCH_PIN 3
+#define BRIGHT_SWITCH_PIN 4
 
-CRGB strip1[LED_COUNT]; // Right Eye
+CRGB strip1[BODY_LED_COUNT]; // Body and Handlebars
+CRGB strip2[BASKET_LED_COUNT]; // Basket
+CRGB strip3[AUX_LED_COUNT]; // Unused
 
 Button modeButton(MODE_SWITCH_PIN, true, true, 100);
 Button colorButton(COLOR_SWITCH_PIN, true, true, 100);
@@ -32,14 +36,14 @@ AnimationStep* fadeSteps[] = {
 };
 
 AnimationStep* cylonSteps[] = {
-	cylonAnimation<1000, &paletteFromSet, 5000, 1, /*swipes*/10, /*width*/255/2, /*color*/(1*255)/6, /*flags*/CYLON_BOUNCE | CYLON_SHOW_PALETTE>(),
-	cylonAnimation<1000, &paletteFromSet, 10000, 1, /*swipes*/8, /*width*/255/2, /*color*/(1*255)/6, /*flags*/CYLON_ROTATE_COLORS | CYLON_FADE>(),
-	cylonAnimation<1000, &paletteFromSet, 10000, 1, /*swipes*/20, /*width*/255/2, /*color*/(1*255)/6, /*flags*/CYLON_REVERSE | CYLON_FADE | CYLON_ROTATE_COLORS | CYLON_SHOW_PALETTE>(),
+	cylonAnimation<1000, &paletteFromSet, 5000, 1, /*swipes*/10, /*width*/255/3, /*color*/(1*255)/6, /*flags*/CYLON_BOUNCE | CYLON_SHOW_PALETTE>(),
+	cylonAnimation<1000, &paletteFromSet, 10000, 1, /*swipes*/8, /*width*/255/3, /*color*/(1*255)/6, /*flags*/CYLON_ROTATE_COLORS | CYLON_FADE>(),
+	cylonAnimation<1000, &paletteFromSet, 10000, 1, /*swipes*/20, /*width*/255/3, /*color*/(1*255)/6, /*flags*/CYLON_REVERSE | CYLON_FADE | CYLON_ROTATE_COLORS | CYLON_SHOW_PALETTE>(),
 	NULL
 };
 
 AnimationStep* fireSteps[] = {
-	fireAnimation< 1000, &paletteFromSet, 10000, 1, /*size*/16, /*cooling*/85, /*sparking*/64>(),
+	fireAnimation< 1000, &paletteFromSet, 10000, 1, /*size*/64, /*cooling*/85, /*sparking*/64>(),
 	NULL
 };
 
@@ -51,7 +55,9 @@ AnimationStep** stepSets[] = {
 	NULL
 };
 
-LedAnimation animation1(fadeSteps, strip1, LED_COUNT, 0);
+LedAnimation animation1(fadeSteps, strip1, BODY_LED_COUNT, 0);
+LedAnimation animation2(fadeSteps, strip2, BASKET_LED_COUNT, 0);
+LedAnimation animation3(fadeSteps, strip3, AUX_LED_COUNT, 0);
 
 //template<int s> struct CompileSizeOf;
 //CompileSizeOf<sizeof(AnimationStep)> wow;
@@ -66,7 +72,10 @@ void setup() {
 
 	FastLED.setCorrection(TypicalSMD5050);
 	//FastLED.addLeds<APA102, SPI_DATA, SPI_CLOCK, GRB, DATA_RATE_MHZ(8)>(strip1, LED_COUNT);
-	FastLED.addLeds<WS2811Controller800Khz, 3, GRB>(strip1, LED_COUNT);
+	FastLED.addLeds<WS2811Controller800Khz, 6, GRB>(strip1, BODY_LED_COUNT);
+	FastLED.addLeds<WS2811Controller800Khz, 7, GRB>(strip1, BASKET_LED_COUNT);
+	FastLED.addLeds<WS2811Controller800Khz, 8, GRB>(strip1, AUX_LED_COUNT);
+
 	FastLED.setDither(BINARY_DITHER);
 
 	Serial.begin(115200);
@@ -81,6 +90,8 @@ void loop() {
 	FastLED.setBrightness(brightnesses[brightnessIndex]);
 
 	animation1.loop();
+	animation2.loop();
+	animation3.loop();
 	FastLED.show();
 
 	uint32_t duration = millis() - start;
@@ -118,6 +129,8 @@ void checkButtons() {
 				stepSetIndex = 0;
 			}
 			animation1.setSteps(stepSets[stepSetIndex]);
+			animation2.setSteps(stepSets[stepSetIndex]);
+			animation3.setSteps(stepSets[stepSetIndex]);
 		}
 	}
 

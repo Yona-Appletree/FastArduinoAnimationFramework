@@ -4,7 +4,7 @@ set(PROJECT_NAME FastArduinoAnimationFramework)
 set(ARDUINO_EXTRA_LIBRARIES_PATH "/Users/yona/Documents/Arduino/libraries")
 project(${PROJECT_NAME})
 
-# register_hardware_platform("/Applications/Arduino 1.6.5.app/Contents/Java/hardware/arduino/avr")
+register_hardware_platform("/Applications/Arduino 1.6.5.app/Contents/Java/hardware/arduino/avr")
 
 set(${CMAKE_PROJECT_NAME}_BOARD nano)
 set(${CMAKE_PROJECT_NAME}_SKETCH FastArduinoAnimationFramework.ino)
