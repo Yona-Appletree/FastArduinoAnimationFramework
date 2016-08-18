@@ -9,8 +9,8 @@
 #include "cptPalettes.h"
 #include "Button.h"
 
-#define TOP_COUNT 84
-#define BOTTOM_COUNT 27
+#define TOP_COUNT 86
+#define BOTTOM_COUNT 23
 
 #define MODE_SWITCH_PIN 4
 #define COLOR_SWITCH_PIN 3
