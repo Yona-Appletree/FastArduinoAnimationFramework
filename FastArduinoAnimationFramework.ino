@@ -9,11 +9,16 @@
 #include "cptPalettes.h"
 #include "Button.h"
 
-#define LED_COUNT 22
+#define TOP_COUNT 33
+#define BOTTOM_COUNT 39
 
-#define MODE_SWITCH_PIN 6
-#define COLOR_SWITCH_PIN 7
-#define BRIGHT_SWITCH_PIN 8
+#define LED_COUNT (TOP_COUNT + BOTTOM_COUNT)
+
+
+
+#define MODE_SWITCH_PIN 2
+#define COLOR_SWITCH_PIN 3
+#define BRIGHT_SWITCH_PIN 4
 
 CRGB strip1[LED_COUNT]; // Right Eye
 
@@ -51,22 +56,28 @@ AnimationStep** stepSets[] = {
 	NULL
 };
 
-LedAnimation animation1(fadeSteps, strip1, LED_COUNT, 0);
+LedAnimation animation1(fadeSteps, strip1, TOP_COUNT, 0);
+LedAnimation animation2(fadeSteps, strip1, BOTTOM_COUNT + TOP_COUNT, 0);
 
 //template<int s> struct CompileSizeOf;
 //CompileSizeOf<sizeof(AnimationStep)> wow;
 
 uint8_t brightnessIndex = 2;
 uint8_t brightnesses[] = {
-	0, 32, 255
+	32, 64, 128, 255
 };
 
 void setup() {
 	pinMode(0, OUTPUT);
 
 	FastLED.setCorrection(TypicalSMD5050);
-	FastLED.addLeds<APA102, SPI_DATA, SPI_CLOCK, GRB, DATA_RATE_MHZ(8)>(strip1, LED_COUNT);
+	//FastLED.addLeds<APA102, SPI_DATA, SPI_CLOCK, GRB, DATA_RATE_MHZ(8)>(strip1, LED_COUNT);
+	FastLED.addLeds<WS2811Controller800Khz, 6, GRB>(strip1, LED_COUNT);
+
 	FastLED.setDither(BINARY_DITHER);
+
+	animation1.setSteps(stepSets[stepSetIndex]);
+	animation2.setSteps(stepSets[stepSetIndex]);
 
 	Serial.begin(115200);
 	Serial.println("START");
@@ -80,6 +91,7 @@ void loop() {
 	FastLED.setBrightness(brightnesses[brightnessIndex]);
 
 	animation1.loop();
+	animation2.loop();
 	FastLED.show();
 
 	uint32_t duration = millis() - start;
@@ -105,6 +117,7 @@ void checkButtons() {
 		} else {
 			nextPaletteSet();
 			animation1.updatePalette();
+			animation2.updatePalette();
 		}
 	}
 
@@ -117,6 +130,7 @@ void checkButtons() {
 				stepSetIndex = 0;
 			}
 			animation1.setSteps(stepSets[stepSetIndex]);
+			animation2.setSteps(stepSets[stepSetIndex]);
 		}
 	}
 
