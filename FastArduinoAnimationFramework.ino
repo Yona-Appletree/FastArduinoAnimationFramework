@@ -9,18 +9,15 @@
 #include "cptPalettes.h"
 #include "Button.h"
 
-#define TOP_COUNT 33
-#define BOTTOM_COUNT 39
+#define TOP_COUNT 43
+#define BOTTOM_COUNT 60
 
-#define LED_COUNT (TOP_COUNT + BOTTOM_COUNT)
-
-
-
-#define MODE_SWITCH_PIN 2
+#define MODE_SWITCH_PIN 4
 #define COLOR_SWITCH_PIN 3
-#define BRIGHT_SWITCH_PIN 4
+#define BRIGHT_SWITCH_PIN 2
 
-CRGB strip1[LED_COUNT]; // Right Eye
+CRGB strip1[TOP_COUNT];
+CRGB strip2[BOTTOM_COUNT];
 
 Button modeButton(MODE_SWITCH_PIN, true, true, 100);
 Button colorButton(COLOR_SWITCH_PIN, true, true, 100);
@@ -57,7 +54,7 @@ AnimationStep** stepSets[] = {
 };
 
 LedAnimation animation1(fadeSteps, strip1, TOP_COUNT, 0);
-LedAnimation animation2(fadeSteps, strip1, BOTTOM_COUNT + TOP_COUNT, 0);
+LedAnimation animation2(fadeSteps, strip2, BOTTOM_COUNT, 0);
 
 //template<int s> struct CompileSizeOf;
 //CompileSizeOf<sizeof(AnimationStep)> wow;
@@ -72,7 +69,8 @@ void setup() {
 
 	FastLED.setCorrection(TypicalSMD5050);
 	//FastLED.addLeds<APA102, SPI_DATA, SPI_CLOCK, GRB, DATA_RATE_MHZ(8)>(strip1, LED_COUNT);
-	FastLED.addLeds<WS2811Controller800Khz, 6, GRB>(strip1, LED_COUNT);
+	FastLED.addLeds<WS2811Controller800Khz, 6, GRB>(strip1, TOP_COUNT);
+	FastLED.addLeds<WS2811Controller800Khz, 7, GRB>(strip2, BOTTOM_COUNT);
 
 	FastLED.setDither(BINARY_DITHER);
 
