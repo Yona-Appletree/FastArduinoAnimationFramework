@@ -9,11 +9,11 @@
 #include "cptPalettes.h"
 #include "Button.h"
 
-#define BODY_LED_COUNT 26
-#define HANDLE_LED_COUNT 20
-#define BODY_HANDLE_LED_COUNT (BODY_LED_COUNT+HANDLE_LED_COUNT)
+#define BODY_LED_COUNT 32
+#define TAIL_LED_COUNT 33
+#define BODY_TAIL_LED_COUNT (BODY_LED_COUNT+TAIL_LED_COUNT)
 
-#define BASKET_LED_COUNT 59
+#define BASKET_LED_COUNT 42
 
 #define AUX_LED_COUNT 20
 
@@ -21,9 +21,8 @@
 #define COLOR_SWITCH_PIN 3
 #define BRIGHT_SWITCH_PIN 4
 
-CRGB strip1[BODY_HANDLE_LED_COUNT]; // Body and Handlebars
+CRGB strip1[BODY_TAIL_LED_COUNT]; // Body and Handlebars
 CRGB strip2[BASKET_LED_COUNT]; // Basket
-CRGB strip3[AUX_LED_COUNT]; // Unused
 
 Button modeButton(MODE_SWITCH_PIN, true, true, 100);
 Button colorButton(COLOR_SWITCH_PIN, true, true, 100);
@@ -60,16 +59,15 @@ AnimationStep** stepSets[] = {
 };
 
 LedAnimation animation1(fadeSteps, strip1, BODY_LED_COUNT, 0);
-LedAnimation animation2(fadeSteps, strip1+BODY_LED_COUNT, HANDLE_LED_COUNT, 0);
+LedAnimation animation2(fadeSteps, strip1+BODY_LED_COUNT, TAIL_LED_COUNT, 0);
 LedAnimation animation3(fadeSteps, strip2, BASKET_LED_COUNT, 0);
-LedAnimation animation4(fadeSteps, strip3, AUX_LED_COUNT, 0);
 
 //template<int s> struct CompileSizeOf;
 //CompileSizeOf<sizeof(AnimationStep)> wow;
 
 uint8_t brightnessIndex = 2;
 uint8_t brightnesses[] = {
-	4, 32, 128
+	4, 32, 255
 };
 
 void setup() {
@@ -77,9 +75,8 @@ void setup() {
 
 	FastLED.setCorrection(TypicalSMD5050);
 	//FastLED.addLeds<APA102, SPI_DATA, SPI_CLOCK, GRB, DATA_RATE_MHZ(8)>(strip1, LED_COUNT);
-	FastLED.addLeds<WS2811Controller800Khz, 6, GRB>(strip1, BODY_HANDLE_LED_COUNT);
+	FastLED.addLeds<WS2811Controller800Khz, 6, GRB>(strip1, BODY_TAIL_LED_COUNT);
 	FastLED.addLeds<WS2811Controller800Khz, 7, GRB>(strip2, BASKET_LED_COUNT);
-	FastLED.addLeds<WS2811Controller800Khz, 8, GRB>(strip3, AUX_LED_COUNT);
 
 	FastLED.setDither(BINARY_DITHER);
 }
@@ -94,7 +91,6 @@ void loop() {
 	animation1.loop();
 	animation2.loop();
 	animation3.loop();
-	animation4.loop();
 	FastLED.show();
 
 	uint32_t duration = millis() - start;
@@ -122,7 +118,6 @@ void checkButtons() {
 			animation1.updatePalette();
 			animation2.updatePalette();
 			animation3.updatePalette();
-			animation4.updatePalette();
 		}
 	}
 
@@ -137,7 +132,6 @@ void checkButtons() {
 			animation1.setSteps(stepSets[stepSetIndex]);
 			animation2.setSteps(stepSets[stepSetIndex]);
 			animation3.setSteps(stepSets[stepSetIndex]);
-			animation4.setSteps(stepSets[stepSetIndex]);
 		}
 	}
 
