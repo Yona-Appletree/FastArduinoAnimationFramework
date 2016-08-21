@@ -9,10 +9,7 @@
 #include "cptPalettes.h"
 #include "Button.h"
 
-#define TOP_COUNT 33
-#define BOTTOM_COUNT 39
-
-#define LED_COUNT (TOP_COUNT + BOTTOM_COUNT)
+#define LED_COUNT 36
 
 
 
@@ -56,13 +53,12 @@ AnimationStep** stepSets[] = {
 	NULL
 };
 
-LedAnimation animation1(fadeSteps, strip1, TOP_COUNT, 0);
-LedAnimation animation2(fadeSteps, strip1, BOTTOM_COUNT + TOP_COUNT, 0);
+LedAnimation animation1(fadeSteps, strip1, LED_COUNT, 0);
 
 //template<int s> struct CompileSizeOf;
 //CompileSizeOf<sizeof(AnimationStep)> wow;
 
-uint8_t brightnessIndex = 2;
+uint8_t brightnessIndex = 3;
 uint8_t brightnesses[] = {
 	32, 64, 128, 255
 };
@@ -77,7 +73,6 @@ void setup() {
 	FastLED.setDither(BINARY_DITHER);
 
 	animation1.setSteps(stepSets[stepSetIndex]);
-	animation2.setSteps(stepSets[stepSetIndex]);
 
 	Serial.begin(115200);
 	Serial.println("START");
@@ -91,7 +86,6 @@ void loop() {
 	FastLED.setBrightness(brightnesses[brightnessIndex]);
 
 	animation1.loop();
-	animation2.loop();
 	FastLED.show();
 
 	uint32_t duration = millis() - start;
@@ -117,7 +111,6 @@ void checkButtons() {
 		} else {
 			nextPaletteSet();
 			animation1.updatePalette();
-			animation2.updatePalette();
 		}
 	}
 
@@ -130,7 +123,6 @@ void checkButtons() {
 				stepSetIndex = 0;
 			}
 			animation1.setSteps(stepSets[stepSetIndex]);
-			animation2.setSteps(stepSets[stepSetIndex]);
 		}
 	}
 
