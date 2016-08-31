@@ -9,19 +9,13 @@
 #include "cptPalettes.h"
 #include "Button.h"
 
-#define BODY_LED_COUNT 78
-#define FRONT_LED_COUNT 21
-
-#define BASKET_LED_COUNT 60
-
-#define FRONT_AND_BODY_LED_COUNT (BODY_LED_COUNT + FRONT_LED_COUNT)
+#define LED_COUNT (60 * 4)
 
 #define MODE_SWITCH_PIN 2
 #define COLOR_SWITCH_PIN 3
 #define BRIGHT_SWITCH_PIN 4
 
-CRGB strip1[FRONT_AND_BODY_LED_COUNT]; // Body and Handlebars
-CRGB strip2[BASKET_LED_COUNT]; // Basket
+CRGB strip1[LED_COUNT];
 
 Button modeButton(MODE_SWITCH_PIN, true, true, 100);
 Button colorButton(COLOR_SWITCH_PIN, true, true, 100);
@@ -57,12 +51,8 @@ AnimationStep** stepSets[] = {
 	NULL
 };
 
-LedAnimation animation1(fadeSteps, strip1, BODY_LED_COUNT, 0);
-LedAnimation animation2(fadeSteps, strip2, BASKET_LED_COUNT, 0);
-LedAnimation animation3(fadeSteps, strip1 + BODY_LED_COUNT, FRONT_LED_COUNT, 0);
-
-//template<int s> struct CompileSizeOf;
-//CompileSizeOf<sizeof(AnimationStep)> wow;
+LedAnimation animation1(fadeSteps, strip1, LED_COUNT, 0);
+//LedAnimation animation2(fadeSteps, strip2, LED_COUNT, 0);
 
 uint8_t brightnessIndex = 2;
 uint8_t brightnesses[] = {
@@ -74,8 +64,8 @@ void setup() {
 
 	FastLED.setCorrection(TypicalSMD5050);
 	//FastLED.addLeds<APA102, SPI_DATA, SPI_CLOCK, GRB, DATA_RATE_MHZ(8)>(strip1, LED_COUNT);
-	FastLED.addLeds<WS2811Controller800Khz, 8, GRB>(strip2, FRONT_AND_BODY_LED_COUNT);
-	FastLED.addLeds<WS2811Controller800Khz, 7, GRB>(strip1, BASKET_LED_COUNT);
+	FastLED.addLeds<WS2811Controller800Khz, 4, GRB>(strip1, LED_COUNT);
+	FastLED.addLeds<WS2811Controller800Khz, 5, GRB>(strip1, LED_COUNT);
 
 	FastLED.setDither(BINARY_DITHER);
 
@@ -91,7 +81,7 @@ void loop() {
 	FastLED.setBrightness(brightnesses[brightnessIndex]);
 
 	animation1.loop();
-	animation2.loop();
+	//animation2.loop();
 	FastLED.show();
 
 	uint32_t duration = millis() - start;
@@ -117,7 +107,7 @@ void checkButtons() {
 		} else {
 			nextPaletteSet();
 			animation1.updatePalette();
-			animation2.updatePalette();
+			//animation2.updatePalette();
 		}
 	}
 
@@ -130,7 +120,7 @@ void checkButtons() {
 				stepSetIndex = 0;
 			}
 			animation1.setSteps(stepSets[stepSetIndex]);
-			animation2.setSteps(stepSets[stepSetIndex]);
+			//animation2.setSteps(stepSets[stepSetIndex]);
 		}
 	}
 
