@@ -9,7 +9,7 @@
 #include "cptPalettes.h"
 #include "Button.h"
 
-#define LED_COUNT 36
+#define LED_COUNT 57
 
 
 
