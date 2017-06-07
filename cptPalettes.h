@@ -135,6 +135,13 @@ DEFINE_GRADIENT_PALETTE( White_Flat ) {
 	0, 255,  255,  255,
 	255, 255,  255,  255};
 
+DEFINE_GRADIENT_PALETTE( Red_Strips ) {
+	0, 255,  1,  0,
+	50, 255,  1,  0,
+	80, 0,  0,  0,
+	200, 0,  0,  0,
+	255, 255,  0,  0
+};
 
 
 static uint8_t paletteSetIndex = 0;
@@ -144,11 +151,11 @@ void paletteFromSet(CRGBPalette16 &pal) {
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Palette Definitions
 
-	//GRADIENT_SET(pjs_gp, revchak_gp, passionata_gp, sunlitwave_gp, trove_gp, Sunset_Real_gp);
+	GRADIENT_SET(Red_Strips);
 	//GRADIENT_SET(sunlitwave_gp, trove_gp, Sunset_Real_gp);
-	PAL16_SET(&RainbowColors_p, &PartyColors_p);
-	PAL16_SET(&CloudColors_p, &LavaColors_p, &OceanColors_p, &ForestColors_p);
-	PAL16_SET(&HeatColors_p);
+	//PAL16_SET(&RainbowColors_p, &PartyColors_p);
+	//PAL16_SET(&CloudColors_p, &LavaColors_p, &OceanColors_p, &ForestColors_p);
+	//PAL16_SET(&HeatColors_p);
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

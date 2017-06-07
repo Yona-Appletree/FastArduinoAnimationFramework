@@ -5,6 +5,7 @@
 
 struct FadeAnimationStep : public AnimationStep {
 	uint8_t cycles;
+	uint8_t paletteFraction;
 };
 
 void fadeAnimationStep(
@@ -17,6 +18,7 @@ void fadeAnimationStep(
     uint16_t ledCount
 ) {
 	uint16_t durationMs = step->durationMs();
+	timeMs = durationMs - timeMs;
 
 	CRGB* led = &ledData[startLed];
 
@@ -25,11 +27,26 @@ void fadeAnimationStep(
 		for (uint16_t i = startLed; i < endLed; i++, led++) {
 			*led = color;
 		}
+	} else if(step->paletteFraction == 255) {
+		uint8_t startFrac = ((uint32_t)timeMs<<8) / durationMs;
+
+		for (uint16_t i = startLed; i < endLed; i++, led++) {
+			*led = ColorFromPalette(palette, (startFrac + (((uint32_t)i << 8)/ ledCount) * step->cycles));
+		}
 	} else {
 		uint8_t startFrac = ((uint32_t)timeMs<<8) / durationMs;
 
 		for (uint16_t i = startLed; i < endLed; i++, led++) {
-			*led = ColorFromPalette(palette, startFrac + (((uint32_t)i << 8)/ ledCount) * step->cycles);
+			*led = ColorFromPalette(
+				palette,
+				(
+					(uint16_t) startFrac +
+					scale8(
+						step->paletteFraction,
+						(((uint32_t)i << 8)/ ledCount) * step->cycles
+					)
+				) % 255
+			);
 		}
 	}
 }
@@ -39,7 +56,8 @@ template<
 	AnimationPalettePopulator paletteFunc,
 	uint16_t durationMs,
 	uint8_t repetitions,
-	uint8_t cycles
+	uint8_t cycles,
+	uint8_t paletteFraction
 >
 FadeAnimationStep* fadeAnimation() {
 	static FadeAnimationStep params;
@@ -47,6 +65,7 @@ FadeAnimationStep* fadeAnimation() {
 	params.animationFunc = (AnimationSequenceStep) &fadeAnimationStep;
 	params.commonParams = commonParams<transitionMs, paletteFunc, durationMs, repetitions>();
 	params.cycles = cycles;
+	params.paletteFraction = paletteFraction;
 
 	return &params;
 }

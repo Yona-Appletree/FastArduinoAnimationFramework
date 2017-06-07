@@ -9,7 +9,7 @@
 #include "cptPalettes.h"
 #include "Button.h"
 
-#define LED_COUNT (60 * 4)
+#define LED_COUNT 200
 
 #define MODE_SWITCH_PIN 2
 #define COLOR_SWITCH_PIN 3
@@ -17,41 +17,13 @@
 
 CRGB strip1[LED_COUNT];
 
-Button modeButton(MODE_SWITCH_PIN, true, true, 100);
-Button colorButton(COLOR_SWITCH_PIN, true, true, 100);
-Button brightButton(BRIGHT_SWITCH_PIN, true, true, 100);
-
-template <AnimationStep* ... steps> AnimationStep** animationArray() {
-	static AnimationStep* values[sizeof...(steps) + 1] = { steps..., NULL };
-}
-
 AnimationStep* fadeSteps[] = {
-	fadeAnimation<1000, &paletteFromSet, 10000, 1, /* reps */1>(),
-	fadeAnimation<1000, &paletteFromSet, 10000, 1, /* reps */1>(),
-	NULL
-};
-
-AnimationStep* cylonSteps[] = {
-	cylonAnimation<1000, &paletteFromSet, 5000, 1, /*swipes*/10, /*width*/255/3, /*color*/(1*255)/6, /*flags*/CYLON_BOUNCE | CYLON_SHOW_PALETTE>(),
-	cylonAnimation<1000, &paletteFromSet, 10000, 1, /*swipes*/8, /*width*/255/3, /*color*/(1*255)/6, /*flags*/CYLON_BOUNCE | CYLON_ROTATE_COLORS | CYLON_FADE>(),
-	cylonAnimation<1000, &paletteFromSet, 10000, 1, /*swipes*/20, /*width*/255/3, /*color*/(1*255)/6, /*flags*/CYLON_BOUNCE | CYLON_REVERSE | CYLON_FADE | CYLON_ROTATE_COLORS | CYLON_SHOW_PALETTE>(),
-	NULL
-};
-
-AnimationStep* fireSteps[] = {
-	fireAnimation< 1000, &paletteFromSet, 10000, 1, /*size*/64, /*cooling*/85, /*sparking*/64>(),
-	NULL
-};
-
-uint8_t stepSetIndex = 0;
-AnimationStep** stepSets[] = {
-	fadeSteps,
-	cylonSteps,
-	fireSteps,
+	fadeAnimation<0, &paletteFromSet, /* dur */ 2000, /* reps */ 3, /* cycles */8, /* frac */ 255>(),
 	NULL
 };
 
 LedAnimation animation1(fadeSteps, strip1, LED_COUNT, 0);
+//LedAnimation animation2(fadeSteps, strip1+60, 31, 0);
 //LedAnimation animation2(fadeSteps, strip2, LED_COUNT, 0);
 
 uint8_t brightnessIndex = 2;
@@ -64,10 +36,11 @@ void setup() {
 
 	FastLED.setCorrection(TypicalSMD5050);
 	//FastLED.addLeds<APA102, SPI_DATA, SPI_CLOCK, GRB, DATA_RATE_MHZ(8)>(strip1, LED_COUNT);
-	FastLED.addLeds<WS2811Controller800Khz, 4, GRB>(strip1, LED_COUNT);
-	FastLED.addLeds<WS2811Controller800Khz, 5, GRB>(strip1, LED_COUNT);
+	FastLED.addLeds<WS2811Controller800Khz, 3, GRB>(strip1, LED_COUNT);
+	//FastLED.addLeds<WS2811Controller800Khz, 5, GRB>(strip1, LED_COUNT);
 
 	FastLED.setDither(BINARY_DITHER);
+	FastLED.setBrightness(255);
 
 	Serial.begin(115200);
 	Serial.println("START");
@@ -77,7 +50,6 @@ void checkButtons();
 void loop() {
 	uint32_t start = millis();
 
-	checkButtons();
 	FastLED.setBrightness(brightnesses[brightnessIndex]);
 
 	animation1.loop();
@@ -86,45 +58,4 @@ void loop() {
 
 	uint32_t duration = millis() - start;
 	FastLED.delay(duration > 33 ? 0 : 33 - duration);
-}
-
-void checkButtons() {
-	modeButton.read();
-	colorButton.read();
-	brightButton.read();
-
-	if (brightButton.wasReleased()) Serial.println("Bright Pressed");
-	if (colorButton.wasReleased()) Serial.println("Color Pressed");
-	if (modeButton.wasReleased()) Serial.println("Mode Pressed");
-
-	if (brightButton.wasReleased()) {
-		brightnessIndex++;
-	}
-
-	if (colorButton.wasReleased()) {
-		if (brightnessIndex == 0) {
-			brightnessIndex ++;
-		} else {
-			nextPaletteSet();
-			animation1.updatePalette();
-			//animation2.updatePalette();
-		}
-	}
-
-	if (modeButton.wasReleased()) {
-		if (brightnessIndex == 0) {
-			brightnessIndex ++;
-		} else {
-			stepSetIndex ++;
-			if (! stepSets[stepSetIndex]) {
-				stepSetIndex = 0;
-			}
-			animation1.setSteps(stepSets[stepSetIndex]);
-			//animation2.setSteps(stepSets[stepSetIndex]);
-		}
-	}
-
-	if (brightnessIndex >= sizeof(brightnesses)) {
-		brightnessIndex = 0;
-	}
 }
